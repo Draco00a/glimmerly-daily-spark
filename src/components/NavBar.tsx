@@ -1,5 +1,5 @@
 
-import { Home, Plus, User } from "lucide-react";
+import { Home, Plus, User, Search } from "lucide-react";
 import { AppView } from "@/lib/types";
 
 interface NavBarProps {
@@ -17,7 +17,17 @@ export default function NavBar({ activeView, onChangeView }: NavBarProps) {
         }`}
       >
         <Home size={24} />
-        <span className="mt-1 text-xs">Per Te</span>
+        <span className="mt-1 text-xs">Home</span>
+      </button>
+      
+      <button
+        onClick={() => onChangeView("friends")}
+        className={`flex flex-1 flex-col items-center py-2 ${
+          activeView === "friends" ? "text-glimmerly-purple" : "text-gray-500"
+        }`}
+      >
+        <Search size={24} />
+        <span className="mt-1 text-xs">Friends</span>
       </button>
       
       <button

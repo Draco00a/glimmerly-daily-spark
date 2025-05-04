@@ -43,7 +43,8 @@ export interface CompletedChallenge {
 export type AppView = 
   | "onboarding" 
   | "daily" 
-  | "feed" 
+  | "feed"
+  | "friends" 
   | "challenge" 
   | "profile";
 

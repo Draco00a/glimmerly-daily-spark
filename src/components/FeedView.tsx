@@ -1,10 +1,10 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CompletedChallenge, GlimmerCategory } from "@/lib/types";
 import { categoryInfo, sampleCompletedChallenges, sampleUsers } from "@/lib/data";
-import { Heart, MessageCircle, Share, Music, User } from "lucide-react";
+import { Heart, MessageCircle, Share, Music, User, BookmarkIcon } from "lucide-react";
 
 interface FeedViewProps {
   onProfileClick: (userId: string) => void;
@@ -15,6 +15,7 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
   const [activeCategory, setActiveCategory] = useState<GlimmerCategory | "all">("all");
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [likedVideos, setLikedVideos] = useState<string[]>([]);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   
   // Filter videos based on active category
   const filteredVideos = activeCategory === "all"
@@ -34,13 +35,19 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
   const handleNextVideo = () => {
     if (currentVideoIndex < filteredVideos.length - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
+      setIsVideoPlaying(true);
     }
   };
   
   const handlePrevVideo = () => {
     if (currentVideoIndex > 0) {
       setCurrentVideoIndex(currentVideoIndex - 1);
+      setIsVideoPlaying(true);
     }
+  };
+
+  const toggleVideoPlay = () => {
+    setIsVideoPlaying(!isVideoPlaying);
   };
 
   if (!currentVideo) {
@@ -75,7 +82,7 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
           </TabsList>
         </Tabs>
         
-        <div className="my-2 flex gap-2 overflow-x-auto pb-2">
+        <div className="my-2 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <Button
             size="sm"
             variant={activeCategory === "all" ? "default" : "outline"}
@@ -109,12 +116,18 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
         <div className="absolute inset-0 touch-none">
           <div 
             className="h-full w-full"
+            onClick={toggleVideoPlay}
             onTouchStart={(e) => {
               const touchStartY = e.touches[0].clientY;
               
               const handleTouchEnd = (endEvent: TouchEvent) => {
                 const touchEndY = endEvent.changedTouches[0].clientY;
                 const deltaY = touchEndY - touchStartY;
+                
+                if (Math.abs(deltaY) < 20) {
+                  toggleVideoPlay();
+                  return;
+                }
                 
                 if (deltaY > 50) {
                   handlePrevVideo();
@@ -133,15 +146,17 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
               alt="Video preview" 
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="rounded-full bg-black/50 p-2 text-white opacity-30">▶️</div>
-            </div>
+            {!isVideoPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="rounded-full bg-black/40 p-4 text-white">▶️</div>
+              </div>
+            )}
           </div>
         </div>
         
         {/* TikTok-style overlay UI */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Video indicator */}
+          {/* Video progress indicator */}
           <div className="flex w-full justify-center mt-2">
             <div className="flex gap-1">
               {filteredVideos.map((_, index) => (
@@ -155,7 +170,7 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 flex px-4 pb-16">
+          <div className="absolute bottom-0 left-0 right-0 flex px-4 pb-24">
             {/* Left side - user info and description */}
             <div className="flex-grow">
               <div 
@@ -168,14 +183,24 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
                   className="h-12 w-12 rounded-full border-2 border-white"
                 />
                 <span className="font-semibold text-white">@{user.username}</span>
+                <Button 
+                  size="sm" 
+                  className="h-7 rounded-full bg-red-500 text-xs text-white hover:bg-red-600 ml-2"
+                >
+                  Segui
+                </Button>
               </div>
               
               <p className="mb-3 text-sm text-white max-w-[80%]">{currentVideo.description}</p>
               
               {/* Music info like TikTok */}
-              <div className="flex items-center gap-2 mb-3">
-                <Music size={14} className="text-white" />
-                <p className="text-sm text-white">Suono originale - {user.username}</p>
+              <div className="flex items-center gap-2 mb-3 animate-marquee-slow pointer-events-auto">
+                <Music size={16} className="text-white" />
+                <div className="overflow-hidden whitespace-nowrap max-w-[180px]">
+                  <p className="text-sm text-white animate-marquee-slow">
+                    Suono originale - {user.username}
+                  </p>
+                </div>
               </div>
               
               <div className="mb-4 inline-block rounded-full bg-black/40 px-3 py-1 text-xs text-white">
@@ -184,13 +209,13 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
             </div>
             
             {/* Right side - interaction buttons */}
-            <div className="flex flex-col items-center gap-6 pointer-events-auto">
+            <div className="flex flex-col items-center gap-5 pointer-events-auto">
               <div 
                 className="flex cursor-pointer flex-col items-center"
                 onClick={() => handleLike(currentVideo.id)}
               >
-                <div className={`flex h-12 w-12 items-center justify-center rounded-full ${isLiked ? "text-red-500" : "text-white"}`}>
-                  <Heart size={30} fill={isLiked ? "currentColor" : "none"} />
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-black/40 ${isLiked ? "text-red-500" : "text-white"}`}>
+                  <Heart size={28} fill={isLiked ? "currentColor" : "none"} />
                 </div>
                 <span className="mt-1 text-xs text-white">
                   {currentVideo.likes + (isLiked ? 1 : 0)}
@@ -198,21 +223,28 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
               </div>
               
               <div className="flex cursor-pointer flex-col items-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full text-white">
-                  <MessageCircle size={30} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
+                  <MessageCircle size={28} />
                 </div>
                 <span className="mt-1 text-xs text-white">{currentVideo.comments}</span>
               </div>
               
               <div className="flex cursor-pointer flex-col items-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full text-white">
-                  <Share size={30} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
+                  <BookmarkIcon size={28} />
+                </div>
+                <span className="mt-1 text-xs text-white">Salva</span>
+              </div>
+              
+              <div className="flex cursor-pointer flex-col items-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
+                  <Share size={28} />
                 </div>
                 <span className="mt-1 text-xs text-white">Condividi</span>
               </div>
               
-              <div className="flex cursor-pointer flex-col items-center">
-                <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-white">
+              <div className="flex cursor-pointer flex-col items-center mt-2">
+                <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white">
                   <img 
                     src={user.avatar} 
                     alt="Avatar" 

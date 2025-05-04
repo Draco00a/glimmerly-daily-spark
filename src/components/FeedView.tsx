@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -76,39 +75,26 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
           className="w-full"
         >
           <TabsList className="grid w-full grid-cols-3 bg-transparent">
-            <TabsTrigger value="for-you" className="text-white data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:rounded-none data-[state=active]:bg-transparent">Per Te</TabsTrigger>
-            <TabsTrigger value="friends" className="text-gray-300 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:rounded-none data-[state=active]:bg-transparent">Amici</TabsTrigger>
-            <TabsTrigger value="popular" className="text-gray-300 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:rounded-none data-[state=active]:bg-transparent">Popolari</TabsTrigger>
+            <TabsTrigger 
+              value="for-you" 
+              className="text-white data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:rounded-none data-[state=active]:bg-transparent"
+            >
+              Per Te
+            </TabsTrigger>
+            <TabsTrigger 
+              value="friends" 
+              className="text-gray-300 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:rounded-none data-[state=active]:bg-transparent"
+            >
+              Seguiti
+            </TabsTrigger>
+            <TabsTrigger 
+              value="popular" 
+              className="text-gray-300 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:rounded-none data-[state=active]:bg-transparent"
+            >
+              LIVE
+            </TabsTrigger>
           </TabsList>
         </Tabs>
-        
-        <div className="my-2 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <Button
-            size="sm"
-            variant={activeCategory === "all" ? "default" : "outline"}
-            className={`rounded-full text-xs py-1 px-3 ${activeCategory === "all" ? "bg-white text-black hover:bg-gray-200" : "border-gray-600 text-gray-300 bg-transparent hover:bg-gray-800"}`}
-            onClick={() => {
-              setActiveCategory("all");
-              setCurrentVideoIndex(0);
-            }}
-          >
-            Tutti
-          </Button>
-          {(Object.entries(categoryInfo) as [GlimmerCategory, { emoji: string }][]).map(([category, info]) => (
-            <Button
-              key={category}
-              size="sm"
-              variant={activeCategory === category ? "default" : "outline"}
-              className={`rounded-full text-xs py-1 px-3 ${activeCategory === category ? "bg-white text-black hover:bg-gray-200" : "border-gray-600 text-gray-300 bg-transparent hover:bg-gray-800"}`}
-              onClick={() => {
-                setActiveCategory(category);
-                setCurrentVideoIndex(0);
-              }}
-            >
-              {info.emoji} {category}
-            </Button>
-          ))}
-        </div>
       </div>
       
       <div className="relative flex-grow overflow-hidden bg-black">
@@ -185,7 +171,7 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
                 <span className="font-semibold text-white">@{user.username}</span>
                 <Button 
                   size="sm" 
-                  className="h-7 rounded-full bg-red-500 text-xs text-white hover:bg-red-600 ml-2"
+                  className="h-7 rounded-full bg-[#FE2C55] text-xs text-white hover:bg-[#FF365E] ml-2"
                 >
                   Segui
                 </Button>
@@ -202,20 +188,27 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
                   </p>
                 </div>
               </div>
-              
-              <div className="mb-4 inline-block rounded-full bg-black/40 px-3 py-1 text-xs text-white">
-                {categoryInfo[currentVideo.category].emoji} {currentVideo.category}
-              </div>
             </div>
             
             {/* Right side - interaction buttons */}
-            <div className="flex flex-col items-center gap-5 pointer-events-auto">
+            <div className="flex flex-col items-center gap-6 pointer-events-auto mr-1">
+              <div className="flex cursor-pointer flex-col items-center">
+                <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-white mb-1">
+                  <img 
+                    src={user.avatar} 
+                    alt="Avatar" 
+                    className="h-full w-full object-cover" 
+                  />
+                </div>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FE2C55] text-white text-xs mb-2">+</div>
+              </div>
+              
               <div 
                 className="flex cursor-pointer flex-col items-center"
                 onClick={() => handleLike(currentVideo.id)}
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-black/40 ${isLiked ? "text-red-500" : "text-white"}`}>
-                  <Heart size={28} fill={isLiked ? "currentColor" : "none"} />
+                <div className={`flex h-12 w-12 items-center justify-center rounded-full ${isLiked ? "text-[#FE2C55]" : "text-white"}`}>
+                  <Heart size={35} fill={isLiked ? "currentColor" : "none"} />
                 </div>
                 <span className="mt-1 text-xs text-white">
                   {currentVideo.likes + (isLiked ? 1 : 0)}
@@ -223,34 +216,24 @@ export default function FeedView({ onProfileClick }: FeedViewProps) {
               </div>
               
               <div className="flex cursor-pointer flex-col items-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
-                  <MessageCircle size={28} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full text-white">
+                  <MessageCircle size={35} />
                 </div>
                 <span className="mt-1 text-xs text-white">{currentVideo.comments}</span>
               </div>
               
               <div className="flex cursor-pointer flex-col items-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
-                  <BookmarkIcon size={28} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full text-white">
+                  <BookmarkIcon size={35} />
                 </div>
                 <span className="mt-1 text-xs text-white">Salva</span>
               </div>
               
               <div className="flex cursor-pointer flex-col items-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
-                  <Share size={28} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full text-white">
+                  <Share size={35} />
                 </div>
                 <span className="mt-1 text-xs text-white">Condividi</span>
-              </div>
-              
-              <div className="flex cursor-pointer flex-col items-center mt-2">
-                <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white">
-                  <img 
-                    src={user.avatar} 
-                    alt="Avatar" 
-                    className="h-full w-full object-cover" 
-                  />
-                </div>
               </div>
             </div>
           </div>

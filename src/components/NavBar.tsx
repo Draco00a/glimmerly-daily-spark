@@ -9,11 +9,11 @@ interface NavBarProps {
 
 export default function NavBar({ activeView, onChangeView }: NavBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10 flex h-16 items-center justify-around border-t bg-white shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-10 flex h-16 items-center justify-around border-t border-gray-800 bg-black">
       <button
         onClick={() => onChangeView("feed")}
         className={`flex flex-1 flex-col items-center py-2 ${
-          activeView === "feed" ? "text-glimmerly-purple" : "text-gray-500"
+          activeView === "feed" ? "text-white" : "text-gray-500"
         }`}
       >
         <Home size={24} />
@@ -23,25 +23,28 @@ export default function NavBar({ activeView, onChangeView }: NavBarProps) {
       <button
         onClick={() => onChangeView("friends")}
         className={`flex flex-1 flex-col items-center py-2 ${
-          activeView === "friends" ? "text-glimmerly-purple" : "text-gray-500"
+          activeView === "friends" ? "text-white" : "text-gray-500"
         }`}
       >
         <Search size={24} />
-        <span className="mt-1 text-xs">Friends</span>
+        <span className="mt-1 text-xs">Scopri</span>
       </button>
       
       <button
         onClick={() => onChangeView("daily")}
-        className="flex -translate-y-4 flex-col items-center rounded-full bg-glimmerly-gradient p-3 text-white shadow-lg"
+        className="flex flex-col items-center"
       >
-        <Plus size={24} />
-        <span className="mt-1 text-xs">Glimmer</span>
+        <div className="flex h-12 w-12 items-center justify-center rounded-md bg-black">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-r from-[#25F4EE] to-[#FE2C55]">
+            <Plus size={20} className="text-white" />
+          </div>
+        </div>
       </button>
       
       <button
         onClick={() => onChangeView("profile")}
         className={`flex flex-1 flex-col items-center py-2 ${
-          activeView === "profile" ? "text-glimmerly-purple" : "text-gray-500"
+          activeView === "profile" ? "text-white" : "text-gray-500"
         }`}
       >
         <User size={24} />
